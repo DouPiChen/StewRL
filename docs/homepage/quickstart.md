@@ -96,7 +96,7 @@ sort: 2
 6. 运行算法，通过config.trick配置算法使用的相关trick，代码如下：
 
    ```python
-   runner.train(step,dict(trick=config.trick))
+   runner.train(run_steps,dict(trick=config.trick))
    ```
 
    
