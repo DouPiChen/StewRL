@@ -6,12 +6,23 @@ sort: 1
 
 ## 简介
 
-This seciton describes the introduction of Eden.
+StewRL框架是为了便于初学者理解强化学习算法的一个模块化强化学习框架。
 
 ## 安装
 
-This section describes how to install the architecture of Eden.
+1. 下载代码
 
-## 配置
+   ``` git
+   git clone https:/github.com/DouPiChen/StewRL.git
+   ```
 
-This section describes how to configure the environment of Eden.
+   
+
+2. 运行代码
+
+   ```python
+   python example.py
+   ```
+
+   
+
