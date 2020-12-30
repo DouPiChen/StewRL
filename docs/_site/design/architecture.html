@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+    <head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=no">
+<meta name="description" content="设计概要 系统整体结构 1、系统框架设计 采用C/S模式，分为三大模块：神经网络、虚拟世界、客户端（可视化）。 神经网络、客户端都只与虚拟世界通信，这里规定下模块之间的通信内容： （1）神经网络与虚拟世界通信协议 神经网络传递的信息为虚拟世界中智能体的指令信息，指令格式为： index act...">
+<meta name="revised" content="2dc419a877e7278613d3ce539f519de9d217db67">
+<meta name="author" content="DouPiChen">
+<meta name="generator" content="jekyll-rtd-theme v2.0.10"><meta name="theme-color" content="#2980b9">
+<title>设计概要 · Your awesome title</title>
+<meta name="twitter:title" content="设计概要 · Your awesome title">
+<meta name="twitter:description" content="设计概要 系统整体结构 1、系统框架设计 采用C/S模式，分为三大模块：神经网络、虚拟世界、客户端（可视化）。 神经网络、客户端都只与虚拟世界通信，这里规定下模块之间的通信内容： （1）神经网络与虚拟世界通信协议 神经网络传递的信息为虚拟世界中智能体的指令信息，指令格式为： index act...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@DouPiChen">
+<meta name="twitter:url" content="http://localhost:4000/design/architecture.html">
+<meta name="twitter:creator" content="@jekyll-rtd-theme v2.0.10">
+<meta property="og:title" content="设计概要 · Your awesome title">
+<meta property="og:description" content="设计概要 系统整体结构 1、系统框架设计 采用C/S模式，分为三大模块：神经网络、虚拟世界、客户端（可视化）。 神经网络、客户端都只与虚拟世界通信，这里规定下模块之间的通信内容： （1）神经网络与虚拟世界通信协议 神经网络传递的信息为虚拟世界中智能体的指令信息，指令格式为： index act...">
+<meta property="og:locale" content="en">
+<meta property="og:url" content="http://localhost:4000/design/architecture.html">
+<meta property="og:type" content="article">
+<meta property="article:author" content="DouPiChen">
+<meta property="article:published_time" content="2020-12-30T10:25:56+08:00">
+<meta property="article:modified_time" content="2020-12-30T10:25:56+08:00">
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http://localhost:4000/design/architecture.html"
+        },
+        "headline": "设计概要 · Your awesome title",
+        "image": [],
+        "author": {
+            "@type": "Person",
+            "name": "DouPiChen"
+        },
+        "datePublished": "2020-12-30T10:25:56+08:00",
+        "dateModified": "2020-12-30T10:25:56+08:00",
+        "publisher": {
+            "@type": "",
+            "name": "DouPiChen",
+            "logo": {
+                "@type": "ImageObject",
+                "url": ""
+            }
+        },
+        "description": "设计概要 系统整体结构 1、系统框架设计 采用C/S模式，分为三大模块：神经网络、虚拟世界、客户端（可视化）。 神经网络、客户端都只与虚拟世界通信，这里规定下模块之间的通信内容： （1）神经网络与虚拟世界通信协议 神经网络传递的信息为虚拟世界中智能体的指令信息，指令格式为： index act..."
+    }
+</script>
+
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="canonical" href="http://localhost:4000/design/architecture.html"><link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg"><link rel="icon" type="image/png" href="/assets/images/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/assets/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/assets/images/favicon-96x96.png" sizes="96x96"><link rel="mask-icon" href="/assets/images/favicon.svg" color="#2980b9"><link rel="apple-touch-icon" href="/assets/images/apple-touch-icon-300x300.jpg">
+<link rel="stylesheet" href="/assets/css/theme.min.css"><script>
+    window.ui = {
+        title: "Your awesome title",
+        baseurl: "",
+        i18n: {
+            search_results: "Search Results",
+            search_results_found: "Search finished, found # page(s) matching the search query.",
+            search_results_not_found: "Your search did not match any documents, please make sure that all characters are spelled correctly!"
+        }
+    };
+</script>
+</head>
+    <body class="container"><div class="sidebar-wrap overflow-hidden">
+    <div class="sidebar height-full overflow-y-scroll overflow-x-hidden">
+        <div class="header d-flex flex-column p-3 text-center">
+            <div class="title pb-1">
+                <a class="h4 no-underline py-1 px-2 rounded-1" href="/" title="Write an awesome description for your new site here">
+                    <i class="fa fa-home"></i> Your awesome title
+                </a>
+            </div>
+            <span class="version"></span>
+            <form class="search pt-2" action="/search.html" method="get" autocomplete="off">
+                <input class="form-control input-block input-sm" type="text" name="q" placeholder="Search docs...">
+            </form>
+        </div>
+        <div class="toctree py-2" data-spy="affix" role="navigation" aria-label="main navigation">
+            
+
+
+<ul>
+</ul>
+
+
+
+
+    
+    <a class="caption d-block text-uppercase no-wrap px-2 py-0" href="/homepage/">
+        主页
+    </a><ul>
+    
+
+        <li class="toc level-1 " data-sort="1" data-level="1">
+            <a class="d-flex flex-items-baseline " href="/homepage/introduction.html">1. 简介&amp;安装</a>
+        </li>
+
+        <li class="toc level-1 " data-sort="2" data-level="1">
+            <a class="d-flex flex-items-baseline " href="/homepage/quickstart.html">2. 快速使用</a>
+        </li></ul>
+
+
+
+    
+    <a class="caption d-block text-uppercase no-wrap px-2 py-0" href="/design/">
+        系统设计概要
+    </a><ul>
+    
+
+        <li class="toc level-1 current" data-sort="1" data-level="1">
+            <a class="d-flex flex-items-baseline current" href="/design/architecture.html">1. 设计概要</a>
+        </li></ul>
+
+
+
+    
+    <a class="caption d-block text-uppercase no-wrap px-2 py-0" href="/api/">
+        API文档
+    </a><ul>
+    </ul>
+
+        </div>
+    </div>
+</div>
+<div class="content-wrap">
+    <div class="header d-flex flex-justify-between p-2 hide-lg hide-xl" aria-label="top navigation">
+        <button id="toggle" aria-label="Toggle menu" class="btn-octicon p-2 m-0 text-white" type="button">
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="title flex-1 d-flex flex-justify-center">
+            <a class="h4 no-underline py-1 px-2 rounded-1" href="/">Your awesome title</a>
+        </div>
+    </div>
+    <div class="content p-3 p-sm-5">
+        <div class="navigation-top d-flex flex-justify-between">
+    <ul class="breadcrumb" role="navigation" aria-label="breadcrumbs navigation">
+        <li class="breadcrumb-item">
+            <a class="no-underline" href="/" title="/">
+                <i class="fa fa-home"></i>
+            </a>
+        </li><li class="breadcrumb-item" ><a href="/design/">design</a></li><li class="breadcrumb-item" aria-current="page">architecture.md</li></ul>
+    <a class="edit" href="https://github.com/DouPiChen/StewRL/edit/gh-pages/design/architecture.md" title="Edit on GitHub" rel="noreferrer" target="_blank">
+        <i class="fa fa-edit"></i>
+    </a>
+</div>
+
+        <hr>
+        <div role="main" itemscope="itemscope" itemtype="https://schema.org/Article">
+            <div class="markdown-body" itemprop="articleBody">
+                <h1 id="设计概要">设计概要</h1>
+
+<h2 id="系统整体结构">系统整体结构</h2>
+
+<h3 id="1系统框架设计">1、系统框架设计</h3>
+
+<p>采用C/S模式，分为三大模块：神经网络、虚拟世界、客户端（可视化）。</p>
+
+<p>神经网络、客户端都只与虚拟世界通信，这里规定下模块之间的通信内容：</p>
+
+<h4 id="1神经网络与虚拟世界通信协议">（1）神经网络与虚拟世界通信协议</h4>
+
+<p>神经网络传递的信息为虚拟世界中智能体的指令信息，指令格式为：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>index</td>
+      <td>action type</td>
+      <td>action param1</td>
+      <td>action param2</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>虚拟世界除了返回智能体自身的信息外，还要给出智能体可见范围内的所有角色的信息</p>
+
+<p>（待填）</p>
+
+<h4 id="2客户端与虚拟世界通信协议">（2）客户端与虚拟世界通信协议</h4>
+
+<p>客户端发送给虚拟世界的信息和神经网络的一致，采用相同格式</p>
+
+<p>虚拟世界返回给前端的信息：</p>
+
+<p>a.角色信息</p>
+
+<p>b.移动信息</p>
+
+<h3 id="2虚拟世界功能模块设计">2、虚拟世界功能模块设计</h3>
+
+<p>根据目前的功能需求，可以分为九个模块：</p>
+
+<p>（1）移动</p>
+
+<p>（2）攻击</p>
+
+<p>（3）吃/使用消耗品</p>
+
+<p>（4）饮水</p>
+
+<p>（5）拾取</p>
+
+<p>（6）合成</p>
+
+<p>（7）装备</p>
+
+<p>（8）解除装备</p>
+
+<p>（9）丢弃物品</p>
+
+<p>由于模块之间存在相似的操作，未来的动作可能会使用到重复的操作，为了降低这些功能模块之间的耦合度，从代码结构和现实世界的角度重新划分这些模块：</p>
+
+<p>（1）角色：角色模块主要是定义虚拟世界中各类Character的属性与接口，这里将虚拟世界中的各类生物、物品、地形都统一称为Character</p>
+
+<p>（2）时间：时间模块的主要功能是管理虚拟世界中和时间密切关联的一些概念，例如：时间类buff、生物复活、地图场景等</p>
+
+<p>（3）地图：地图模块囊括了地图上所有的Character，提供地点访问和障碍检测的接口</p>
+
+<p>（4）指令：指令模块负责解释并执行指令，根据指令执行的结果产生相应的事件</p>
+
+<p>（5）状态：状态模块用于生物的智能化，主要的功能包括状态转移和生成生物指令</p>
+
+<p>（6）事件：事件模块主要负责处理由指令模块产生的事件，这些事件往往需要对其他模块进行修改</p>
+
+<p><img src="/design/pics/architecture.jpg" alt="系统结构" /></p>
+
+<h2 id="角色模块概要">角色模块概要</h2>
+
+<p>为了方便起见，将虚拟世界中的生物、物品、地形都统称为角色（Character），角色是虚拟世界中可操作的对象的总集合。</p>
+
+<p>Object指代除了地形之外的Character</p>
+
+<p>设计理念：</p>
+
+<p>（1）地形：地形在虚拟世界中不可改变，因此自身属性是固定的，为了区分不同的地形，需要给出地形的类型属性。</p>
+
+<p>（2）物品（材料、食物、工具）：物品经由生物掉落或者合成得到，除了区分不同类型的物品外，还要区分同种类型的不同物品，所以需要序号属性来进行区分，此外物品可以被生物使用，根据物品种类的不同，提供不一样的效果；</p>
+
+<p>（3）生物：生物则是虚拟世界中最为活跃的角色，在游戏过程中属性会被频繁地修改，然而有部分属性却是十分稳定，比如：类型、序号，经由这两个属性唯一地确定一个角色，因此需要将稳定的部分和变化的部分进行分离。</p>
+
+<h2 id="时间模块概要">时间模块概要</h2>
+
+<p>（1)buff：时间在现实世界中是最为重要的概念之一，虚拟世界中使用时间模块来模拟时间这一重要概念。按照主流游戏的设定，时间类的buff超过作用时间后就会从buff栏消失；</p>
+
+<p>（2）物品：地图上的物品有存在时间，超出这个时间物品就会消失；</p>
+
+<p>（3）场景：地图的场景会随着时间变化；</p>
+
+<p>（4）复活：死亡的生物经过一段时间会在某些固定点重生。</p>
+
+<h2 id="地图模块概要">地图模块概要</h2>
+
+<p>在虚拟世界中存在障碍物，采用如下设定：默认各类物品都是可以穿越的，部分地形禁止穿越，生物之间不可重叠。</p>
+
+<p>根据上述的设定分析，生物的移动不会引起地形和物品地图的变化，地形、物品在地图上的变化也不会影响到生物，生物、地形、物品在地图上是相互独立的，因此将地图模块细分为三个子模块：</p>
+
+<p>（1）生物地图</p>
+
+<p>（2）地形地图</p>
+
+<p>（3）物品地图</p>
+
+<h2 id="指令模块概要">指令模块概要</h2>
+
+<p>指令模块用于完成游戏玩家和神经网络的各类指令，并为每一类指令进行编码表示。</p>
+
+<p>目前的指令有9个指令，这些指令以向量的形式表示，除了指令编码，还应该有对应的指令参数，指令参数的功能是告知系统指令的执行方法。</p>
+
+<h2 id="状态模块概要">状态模块概要</h2>
+
+<p>（1）状态转移：状态模块用于控制生物的行为，每个游戏循环中，生物会根据自身的状态以及周围环境做出决策，切换到下一个状态。</p>
+
+<p>（2）状态决策：根据自身的状态做出决策，生成本轮的生物指令并执行。</p>
+
+
+            </div>
+        </div>
+        <hr>
+
+<div class="copyright text-center text-gray" role="contentinfo">
+    <i class="fa fa-copyright"></i>
+    <span class="time">2020,</span>
+    <a class="text-gray" href="https://github.com/DouPiChen" rel="noreferrer" target="_blank">DouPiChen</a>
+    Revision
+    <a class="text-gray" href="https://github.com/DouPiChen/StewRL/commit/2dc419a877e7278613d3ce539f519de9d217db67" title="2dc419a877e7278613d3ce539f519de9d217db67" rel="noreferrer" target="_blank">2dc419a</a>
+    
+        <br>
+        <div class="generator">
+            Built with
+            <a href="https://pages.github.com" rel="noreferrer" target="_blank" title="github-pages v209">GitHub Pages</a>
+            using a
+            <a href="https://github.com/rundocs/jekyll-rtd-theme" rel="noreferrer" target="_blank" title="jekyll-rtd-theme v2.0.10">theme</a>
+            provided by
+            <a href="https://rundocs.io" rel="noreferrer" target="_blank">RunDocs</a>.
+        </div>
+    
+</div>
+
+    </div>
+</div>
+<div class="addons-wrap d-flex flex-column overflow-y-auto">
+    <div class="status d-flex flex-justify-between p-2">
+        <div class="title p-1">
+            <i class="fa fa-book"></i> Your awesome title
+        </div>
+        <div class="branch p-1">
+            <span class="name">
+                gh-pages
+            </span>
+            <i class="fa fa-caret-down"></i>
+        </div>
+    </div>
+    <div class="addons d-flex flex-column height-full p-2 d-none">
+        <dl>
+            <dt>GitHub</dt>
+            <dd>
+                <a href="https://github.com/DouPiChen/StewRL" title="Stars: ">
+                    <i class="fa fa-github"></i>
+                    Homepage
+                </a>
+            </dd>
+            <dd>
+                <a href="" title="Open issues: ">
+                    <i class="fa fa-question-circle-o"></i>
+                    Issues
+                </a>
+            </dd>
+            <dd>
+                <a href="https://github.com/DouPiChen/StewRL/zipball/gh-pages" title="Size:  Kb">
+                    <i class="fa fa-download"></i>
+                    Download
+                </a>
+            </dd>
+        </dl>
+        <hr>
+        <div class="license f6 pb-2">
+            This
+            <a href="/" title="Your awesome title">Software</a>
+            is under the terms of
+            <a href="https://github.com/DouPiChen/StewRL">The Unlicense</a>.
+        </div>
+    </div>
+</div>
+<script src="/assets/js/jquery.min.js"></script><script src="/assets/js/theme.min.js"></script>
+
+</body>
+</html>
