@@ -162,6 +162,6 @@ for epoch in count():
     writer.add_scalar('episode reward', episode_reward, epoch)
     if epoch % 10 == 0:
         print('Epoch:{}, episode reward is {}'.format(epoch, episode_reward))
-        torch.save(policy.state_dict(), 'ppo-policy.para')
+        #torch.save(policy.state_dict(), 'ppo-policy.para')
 
 
