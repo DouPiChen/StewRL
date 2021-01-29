@@ -1,0 +1,52 @@
+{
+    "policy": {
+        "head": [
+            {
+                "linear": [
+                    "in_dim",
+                    256
+                ]
+            },
+            "relu",
+            {
+                "linear": [
+                    256,
+                    256
+                ]
+            },
+            "relu"
+        ],
+        "final": [
+            {
+                "linear": [
+                    256,
+                    "out_dim"
+                ]
+            }
+        ]
+    },
+    "value": {
+        "all": [
+            {
+                "linear": [
+                    "in_dim",
+                    256
+                ]
+            },
+            "relu",
+            {
+                "linear": [
+                    256,
+                    256
+                ]
+            },
+            "relu",
+            {
+                "linear": [
+                    256,
+                    "out_dim"
+                ]
+            }
+        ]
+    }
+}

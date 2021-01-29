@@ -1,13 +1,13 @@
 import torch.nn as nn
-from .network import _make_layers
+from .network import _make_layer
 
 class ComposedNetwork(nn.Module):
   def __init__(self,network_arch):
     super(ComposedNetwork,self).__init__()
-    layers = dict()
+    layer = dict()
     for key,value in network_arch.items():
-      layers.update({key: _make_layers(value)})
-    self.layers = layers
+      layer.update({key: _make_layer(value)})
+    self.layer = layer
 
   def forward(self,x):
     pass
@@ -15,9 +15,9 @@ class ComposedNetwork(nn.Module):
 class DuelingNetwork(ComposedNetwork):
   def __init__(self,network_arch):
     super(DuelingNetwork,self).__init__(network_arch)
-    self.feature_layer = self.layers["feature"]
-    self.advantage_layer = self.layers["actor"]
-    self.value_layer = self.layers["value"]
+    self.feature_layer = self.layer["feature"]
+    self.advantage_layer = self.layer["actor"]
+    self.value_layer = self.layer["value"]
 
   def forward(self,x):
     feature = self.feature_layer(x)

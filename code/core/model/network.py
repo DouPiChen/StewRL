@@ -1,43 +1,66 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.distributions import Categorical,Normal
 from .noisy_linear import NoisyLinear
 
-def _make_layers(network_arch):
-  layers = []
+def _make_layer(network_arch):
+  layer = []
   for net in network_arch:
     if net=="relu":
-      layers += [nn.ReLU()]
+      layer += [nn.ReLU()]
     elif net=="softmax":
-      layers += [nn.Softmax(dim=-1)]
+      layer += [nn.Softmax(dim=-1)]
     else:
       if net.get("linear"):
         value = net.get("linear")
-        layers += [nn.Linear(value[0],value[1])]
+        layer += [nn.Linear(value[0],value[1])]
       elif net.get("noisy_linear"):
         value = net.get("noisy_linear")
-        layers += [NoisyLinear(value[0],value[1],value[2])]
+        layer += [NoisyLinear(value[0],value[1],value[2])]
       elif net.get("conv"):
         value = net.get("conv")
-        layers += [nn.Conv2d(value[0],value[1],value[2],value[3])]
+        layer += [nn.Conv2d(value[0],value[1],value[2],value[3])]
       else:
         raise NotImplementedError("Do not support this kind of network layer")
-  return nn.Sequential(*layers)
+  return nn.Sequential(*layer)
 
 class Network(nn.Module):
   def __init__(self,network_arch):
     super(Network,self).__init__()
-    self.layers = _make_layers(network_arch)
+    self.layer = None
+    self.head = None
+    self.final = None
+    if network_arch.get("all"):
+      self.layer = _make_layer(network_arch["all"])
 
   def forward(self,x):
-    return self.layers(x)
+    return self.layer(x)
 
   def reset_noise(self):
-    for layer in self.layers:
+    for layer in self.layer:
       if type(layer)==NoisyLinear:
         layer.reset_noise()
 
-class DiscretePolicyNetwork(Network):
+class Network2(Network):
+  def __init__(self,network_arch):
+    super(Network2,self).__init__(network_arch)
+    if network_arch.get("head"):
+      self.head = _make_layer(network_arch["head"])
+    if network_arch.get("final"):
+      self.final = _make_layer(network_arch["final"])
+
+  def forward(self,x):
+    x = self.head(x)
+    x = self.final(x)
+    return x
+
+class DiscretePolicyNetwork(Network2):
+  def forward(self,x):
+    x = super().forward(x)
+    x  = F.softmax(x,dim=-1)
+    return x
+
   def sample(self,prob):
     dist = Categorical(prob)
     action = dist.sample()
@@ -55,22 +78,16 @@ class DiscretePolicyNetwork(Network):
     entropy = dist.entropy()
     return entropy
 
-class ContinuousPolicyNetwork(Network):
+class ContinuousPolicyNetwork(Network2):
   def __init__(self,network_arch):
     super(ContinuousPolicyNetwork,self).__init__(network_arch)
-    network_arch_reverse = network_arch.copy()
-    network_arch_reverse.reverse()
-    out_dim = 1
-    for layer in network_arch_reverse:
-      if layer[0]=="linear":
-        out_dim = layer[2]
-        break
-    std_init = torch.zeros(out_dim)
-    self.log_stddev = nn.Parameter(std_init)
+    value = network_arch.get("final")[-1].get("linear")
+    self.std_head = nn.Linear(value[0],value[1])
 
   def forward(self,x):
-    mean = self.layers(x)
-    std = torch.exp(self.log_stddev)
+    x = self.head(x)
+    mean = torch.tanh(self.final(x))*2
+    std = F.softplus(self.std_head(x))+1e-3
     return mean,std
 
   def sample(self,prob):
@@ -99,7 +116,7 @@ class RNNNetwork(nn.Module):
     super(RNNNetwork,self).__init__()
 
   def forward(self,x,hidden):
-    x_,hidden_ = self.layers(x,hidden)
+    x_,hidden_ = self.layer(x,hidden)
     return x_,hidden_
 
 class DummyNetwork(nn.Module):

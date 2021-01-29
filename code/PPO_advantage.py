@@ -7,7 +7,7 @@ import numpy as np
 from collections import deque
 import random
 import torch.nn.functional as F
-from tensorboardX import SummaryWriter
+#from tensorboardX import SummaryWriter
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -17,11 +17,11 @@ from core import *
 
 with open("../parameter/base/network/ac.json","r") as f:
   network = json.load(f)
-network["policy"][0]["linear"][0] = 3
-network["policy"][-2]["linear"][1] = 1
-network["policy"][-1]["tanh"] = 2
-network["value"][0]["linear"][0]=3
-network["value"][-1]["linear"][1] = 1
+print(network)
+network["policy"]["head"][0]["linear"][0] = 3
+network["policy"]["final"][0]["linear"][1] = 1
+network["value"]["all"][0]["linear"][0]=3
+network["value"]["all"][-1]["linear"][1] = 1
 print(network)
 
 class PolicyNetwork(nn.Module):
@@ -91,8 +91,11 @@ class Memory(object):
 
 
 env = gym.make('Pendulum-v0')
-policy = PolicyNetwork().to(device)
-old_policy = PolicyNetwork().to(device)
+#policy = PolicyNetwork().to(device)
+#old_policy = PolicyNetwork().to(device)
+policy = ContinuousPolicyNetwork(network["policy"]).to(device)
+old_policy = ContinuousPolicyNetwork(network["policy"]).to(device)
+print(policy)
 optim = torch.optim.Adam(policy.parameters(), lr=1e-5)
 #value = ValueNetwork().to(device)
 value = Network(network["value"]).to(device)
@@ -102,7 +105,7 @@ gamma = 0.9
 steps = 0
 
 is_learn = False
-writer = SummaryWriter('ppo_logs')
+#writer = SummaryWriter('ppo_logs')
 
 
 for epoch in count():
@@ -113,9 +116,13 @@ for epoch in count():
     actions = []
     for time_steps in range(200):
         state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
-        action = policy.select_action(state_tensor)
+        print(state_tensor.size())
+        #action = policy.select_action(state_tensor)
+        prob = policy(state_tensor)
+        action,_,_ = policy.sample(prob)
         # print('action : ', action)
-        next_state, reward, done, _ = env.step([action])
+        action = action.cpu().squeeze(0).numpy()
+        next_state, reward, done, _ = env.step(action)
         episode_reward += reward
         reward = (reward + 8.1) / 8.1
 
@@ -157,7 +164,7 @@ for epoch in count():
                 # print(log_prob.shape)
                 loss = torch.min(L1, L2)
                 loss = - loss.mean()
-                writer.add_scalar('action loss', loss.item(), steps)
+                #writer.add_scalar('action loss', loss.item(), steps)
                 # print(loss.shape)
                 optim.zero_grad()
                 loss.backward()
@@ -167,12 +174,12 @@ for epoch in count():
                 value_optim.zero_grad()
                 value_loss.backward()
                 value_optim.step()
-                writer.add_scalar('value loss', value_loss.item(), steps)
+                #writer.add_scalar('value loss', value_loss.item(), steps)
             rewards = []
             states = []
             actions = []
 
-    writer.add_scalar('episode reward', episode_reward, epoch)
+    #writer.add_scalar('episode reward', episode_reward, epoch)
     if epoch % 10 == 0:
         print('Epoch:{}, episode reward is {}'.format(epoch, episode_reward))
         #torch.save(policy.state_dict(), 'ppo-policy.para')
